@@ -18,6 +18,10 @@ export const metadata: Metadata = {
   description: "Reviews for Ludhiana Burrito",
 };
 
+export const viewport = {
+  themeColor: "#141414",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[#f7f6f4] text-[#1d1d1d] antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[#141414] text-[#f4f4f5] antialiased`}
       >
         <TopBar />
         {children}

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import Star from "@/components/Star";
 
 type Review = {
@@ -27,6 +28,12 @@ const formatDate = (iso: string) =>
     month: "short",
     year: "numeric",
   });
+
+const STRIP = [
+  { src: "/images/dishes.jpg", alt: "Signature dishes" },
+  { src: "/images/interior.jpg", alt: "Restaurant ambience" },
+  { src: "/images/cocktails.jpg", alt: "Drinks" },
+];
 
 export default function RestaurantPage() {
   const { id } = useParams<{ id: string }>();
@@ -66,16 +73,49 @@ export default function RestaurantPage() {
 
   return (
     <Main>
-      {/* Restaurant identity, Zomato-style: bold name, muted cuisine and area */}
-      <h1 className="text-3xl font-bold tracking-tight">{data.name}</h1>
-      <p className="mt-1 text-sm text-[#757575]">
-        {data.cuisine} · {data.area}
-      </p>
+      {/* Hero photo with the restaurant name overlaid, Zomato-style */}
+      <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-[#2a2a2e]">
+        <Image
+          src="/images/hero.jpg"
+          alt={data.name}
+          fill
+          priority
+          sizes="(max-width: 640px) 100vw, 560px"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-transparent" />
+        <div className="absolute bottom-0 left-0 p-4">
+          <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">
+            {data.name}
+          </h1>
+          <p className="mt-1 text-sm text-white/75">
+            {data.cuisine} · {data.area}
+          </p>
+        </div>
+      </div>
+
+      {/* Photo strip, like Zomato's gallery row */}
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {STRIP.map((p) => (
+          <div
+            key={p.src}
+            className="relative h-24 overflow-hidden rounded-xl border border-[#2a2a2e]"
+          >
+            <Image
+              src={p.src}
+              alt={p.alt}
+              fill
+              sizes="180px"
+              className="object-cover transition-transform duration-300 hover:scale-105"
+            />
+          </div>
+        ))}
+      </div>
 
       {data.totalReviews === 0 ? (
         // Empty state that invites the first review
-        <div className="mt-10 rounded-2xl border border-[#ececec] bg-white p-8 text-center shadow-sm">
-          <p className="text-[#757575]">No reviews yet.</p>
+        <div className="mt-6 rounded-2xl border border-[#2a2a2e] bg-[#1e1e21] p-8 text-center shadow-sm">
+          <p className="text-[#a1a1a3]">No reviews yet.</p>
           <p className="mt-1 font-semibold">Be the first to review {data.name}</p>
         </div>
       ) : (
@@ -83,14 +123,14 @@ export default function RestaurantPage() {
           {/* The average rating, large — the biggest thing on the page.
               The line that prints the average is simply {data.averageRating}.
               There is no calculation anywhere in this file. */}
-          <div className="mt-6 rounded-2xl border border-[#ececec] bg-white p-5 shadow-sm">
+          <div className="mt-6 rounded-2xl border border-[#2a2a2e] bg-[#1e1e21] p-5 shadow-sm">
             <div className="flex items-end gap-2">
-              <span className="text-6xl font-extrabold leading-none tracking-tight">
+              <span className="text-6xl font-extrabold leading-none tracking-tight text-white">
                 {data.averageRating}
               </span>
               <Star filled className="mb-1.5 h-7 w-7 text-[#E23744]" />
             </div>
-            <p className="mt-2 text-sm text-[#757575]">
+            <p className="mt-2 text-sm text-[#a1a1a3]">
               Based on {data.totalReviews}{" "}
               {data.totalReviews === 1 ? "review" : "reviews"}
             </p>
@@ -100,12 +140,12 @@ export default function RestaurantPage() {
 
           {/* The latest review, highlighted with the brand-red chip */}
           {data.latestReview && (
-            <article className="mt-3 rounded-2xl border border-[#f3cfce] bg-white p-4 shadow-sm">
+            <article className="mt-3 rounded-2xl border border-[#E23744]/45 bg-[#1e1e21] p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <span className="rounded-full bg-[#E23744] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
                   Latest
                 </span>
-                <span className="text-xs text-[#757575]">
+                <span className="text-xs text-[#a1a1a3]">
                   {formatDate(data.latestReview.createdAt)}
                 </span>
               </div>
@@ -122,13 +162,13 @@ export default function RestaurantPage() {
             </article>
           )}
 
-          {/* The older reviews, plain white cards */}
+          {/* The older reviews, plain dark cards */}
           {data.reviews.length > 0 && (
             <div className="mt-3 space-y-3">
               {data.reviews.map((review) => (
                 <article
                   key={review.id}
-                  className="rounded-2xl border border-[#ececec] bg-white p-4 shadow-sm"
+                  className="rounded-2xl border border-[#2a2a2e] bg-[#1e1e21] p-4 shadow-sm"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex gap-1">
@@ -140,7 +180,7 @@ export default function RestaurantPage() {
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-[#757575]">
+                    <span className="text-xs text-[#a1a1a3]">
                       {formatDate(review.createdAt)}
                     </span>
                   </div>
@@ -153,7 +193,7 @@ export default function RestaurantPage() {
       )}
 
       {/* Sticky, Zomato-red call to action pinned to the bottom of the screen */}
-      <div className="sticky bottom-0 mt-10 border-t border-[#ececec] bg-white/95 backdrop-blur">
+      <div className="sticky bottom-0 mt-10 border-t border-[#26262a] bg-[#141414]/95 backdrop-blur">
         <div className="mx-auto max-w-[512px] py-3">
           <a
             href={`/review/${id}`}
@@ -169,6 +209,6 @@ export default function RestaurantPage() {
 
 function Main({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto max-w-[560px] px-6 py-6">{children}</main>
+    <main className="mx-auto max-w-[560px] px-6 py-4">{children}</main>
   );
 }

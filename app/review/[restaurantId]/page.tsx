@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import Star from "@/components/Star";
 
 const RATING_CAPTIONS = ["", "Terrible", "Bad", "Okay", "Good", "Excellent"];
@@ -79,19 +80,32 @@ export default function ReviewPage() {
   if (missing) {
     return (
       <Main>
-        <p className="text-[#757575]">Restaurant not found.</p>
+        <p className="text-[#a1a1a3]">Restaurant not found.</p>
       </Main>
     );
   }
 
   return (
     <Main>
-      <p className="text-sm text-[#757575]">Write a review for</p>
-      <h1 className="mt-1 text-2xl font-bold tracking-tight">
+      {/* Small ambience photo header */}
+      <div className="relative h-28 w-full overflow-hidden rounded-2xl border border-[#2a2a2e]">
+        <Image
+          src="/images/interior.jpg"
+          alt="Restaurant ambience"
+          fill
+          priority
+          sizes="(max-width: 640px) 100vw, 560px"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+      </div>
+
+      <p className="mt-4 text-sm text-[#a1a1a3]">Write a review for</p>
+      <h1 className="mt-1 text-2xl font-bold tracking-tight text-white">
         {name ?? "…"}
       </h1>
 
-      <form onSubmit={handleSubmit} className="mt-8">
+      <form onSubmit={handleSubmit} className="mt-7">
         {/* A star picker, 1 to 5, clickable, with a clear selected state
             and a Zomato-style caption that describes the chosen rating */}
         <label className="block text-sm font-semibold">Your rating</label>
@@ -132,7 +146,7 @@ export default function ReviewPage() {
           onChange={(e) => setComment(e.target.value)}
           rows={4}
           placeholder="Share your experience…"
-          className="mt-2 w-full resize-none rounded-xl border border-[#e2e0dc] bg-white px-4 py-3 text-base outline-none shadow-sm focus:border-[#E23744]"
+          className="mt-2 w-full resize-none rounded-xl border border-[#34343a] bg-[#232327] px-4 py-3 text-base text-[#f4f4f5] shadow-sm outline-none placeholder:text-[#6b6b70] focus:border-[#E23744]"
         />
 
         {error && <p className="mt-3 text-sm font-medium text-[#E23744]">{error}</p>}
@@ -152,6 +166,6 @@ export default function ReviewPage() {
 
 function Main({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto max-w-[560px] px-6 py-6">{children}</main>
+    <main className="mx-auto max-w-[560px] px-6 py-4">{children}</main>
   );
 }
