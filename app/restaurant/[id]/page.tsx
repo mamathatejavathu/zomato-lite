@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Star from "@/components/Star";
 
 type Review = {
   id: number;
@@ -65,75 +66,102 @@ export default function RestaurantPage() {
 
   return (
     <Main>
-      {/* 1. Restaurant name, with cuisine and area underneath in muted text */}
-      <h1 className="text-3xl font-semibold tracking-tight">{data.name}</h1>
-      <p className="mt-1 text-sm text-stone-500">
+      {/* Restaurant identity, Zomato-style: bold name, muted cuisine and area */}
+      <h1 className="text-3xl font-bold tracking-tight">{data.name}</h1>
+      <p className="mt-1 text-sm text-[#757575]">
         {data.cuisine} · {data.area}
       </p>
 
       {data.totalReviews === 0 ? (
-        // 6. Empty state that invites the first review
-        <div className="mt-16 rounded-xl border border-stone-200 p-6 text-center">
-          <p className="text-stone-500">No reviews yet.</p>
-          <a
-            href={`/review/${id}`}
-            className="mt-2 inline-block font-medium text-amber-700 underline-offset-4 hover:underline"
-          >
-            Be the first to review {data.name}
-          </a>
+        // Empty state that invites the first review
+        <div className="mt-10 rounded-2xl border border-[#ececec] bg-white p-8 text-center shadow-sm">
+          <p className="text-[#757575]">No reviews yet.</p>
+          <p className="mt-1 font-semibold">Be the first to review {data.name}</p>
         </div>
       ) : (
         <>
-          {/* 2. The average rating, large — the biggest thing on the page —
-              with the review count next to it in small text.
+          {/* The average rating, large — the biggest thing on the page.
               The line that prints the average is simply {data.averageRating}.
               There is no calculation anywhere in this file. */}
-          <div className="mt-10 flex items-baseline gap-3">
-            <span className="text-6xl font-semibold tracking-tight">
-              {data.averageRating}
-            </span>
-            <span className="text-sm text-stone-500">
-              {data.totalReviews} {data.totalReviews === 1 ? "review" : "reviews"}
-            </span>
+          <div className="mt-6 rounded-2xl border border-[#ececec] bg-white p-5 shadow-sm">
+            <div className="flex items-end gap-2">
+              <span className="text-6xl font-extrabold leading-none tracking-tight">
+                {data.averageRating}
+              </span>
+              <Star filled className="mb-1.5 h-7 w-7 text-[#E23744]" />
+            </div>
+            <p className="mt-2 text-sm text-[#757575]">
+              Based on {data.totalReviews}{" "}
+              {data.totalReviews === 1 ? "review" : "reviews"}
+            </p>
           </div>
 
-          {/* 3. The latest review, visually highlighted, set apart from the rest */}
+          <h2 className="mt-8 text-lg font-bold tracking-tight">Reviews</h2>
+
+          {/* The latest review, highlighted with the brand-red chip */}
           {data.latestReview && (
-            <div className="mt-8 rounded-xl border border-amber-200/70 bg-amber-50/60 p-5">
-              <p className="text-xs font-medium tracking-wide text-amber-700 uppercase">
-                Latest
-              </p>
+            <article className="mt-3 rounded-2xl border border-[#f3cfce] bg-white p-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-[#E23744] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                  Latest
+                </span>
+                <span className="text-xs text-[#757575]">
+                  {formatDate(data.latestReview.createdAt)}
+                </span>
+              </div>
+              <div className="mt-3 flex gap-1">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <Star
+                    key={n}
+                    filled={n <= data.latestReview!.rating}
+                    className="h-4 w-4 text-[#E23744]"
+                  />
+                ))}
+              </div>
               <p className="mt-2 text-lg">{data.latestReview.comment}</p>
-              <p className="mt-3 text-sm text-stone-500">
-                ★ {data.latestReview.rating} · {formatDate(data.latestReview.createdAt)}
-              </p>
-            </div>
+            </article>
           )}
 
-          {/* 4. The older reviews below, in a plain list */}
+          {/* The older reviews, plain white cards */}
           {data.reviews.length > 0 && (
-            <ul className="mt-8 divide-y divide-stone-200">
+            <div className="mt-3 space-y-3">
               {data.reviews.map((review) => (
-                <li key={review.id} className="py-4">
-                  <p>{review.comment}</p>
-                  <p className="mt-1 text-sm text-stone-500">
-                    ★ {review.rating} · {formatDate(review.createdAt)}
-                  </p>
-                </li>
+                <article
+                  key={review.id}
+                  className="rounded-2xl border border-[#ececec] bg-white p-4 shadow-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <Star
+                          key={n}
+                          filled={n <= review.rating}
+                          className="h-4 w-4 text-[#E23744]"
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-[#757575]">
+                      {formatDate(review.createdAt)}
+                    </span>
+                  </div>
+                  <p className="mt-2">{review.comment}</p>
+                </article>
               ))}
-            </ul>
+            </div>
           )}
         </>
       )}
 
-      {/* 5. A link to /review/[id] */}
-      <div className="mt-12 border-t border-stone-200 pt-6">
-        <a
-          href={`/review/${id}`}
-          className="font-medium text-amber-700 underline-offset-4 hover:underline"
-        >
-          Write a review
-        </a>
+      {/* Sticky, Zomato-red call to action pinned to the bottom of the screen */}
+      <div className="sticky bottom-0 mt-10 border-t border-[#ececec] bg-white/95 backdrop-blur">
+        <div className="mx-auto max-w-[512px] py-3">
+          <a
+            href={`/review/${id}`}
+            className="block rounded-xl bg-[#E23744] px-5 py-3 text-center font-semibold text-white shadow-sm transition-colors hover:bg-[#c92a37]"
+          >
+            Write a Review
+          </a>
+        </div>
       </div>
     </Main>
   );
@@ -141,6 +169,6 @@ export default function RestaurantPage() {
 
 function Main({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto min-h-screen max-w-[560px] px-6 py-10">{children}</main>
+    <main className="mx-auto max-w-[560px] px-6 py-6">{children}</main>
   );
 }
