@@ -26,12 +26,18 @@ export async function GET(
 
   // The facts: every review for this restaurant, newest first.
   // (id DESC as a tie-breaker when two reviews share the same timestamp.)
-  const allReviews = await sql`
+  type DbReview = {
+    id: number;
+    rating: number;
+    comment: string;
+    created_at: string | Date;
+  };
+  const allReviews = (await sql`
     SELECT id, rating, comment, created_at
     FROM reviews
     WHERE restaurant_id = ${restaurantId}
     ORDER BY created_at DESC, id DESC
-  `;
+  `) as DbReview[];
 
   // The answers: computed fresh, right now, from the facts. Nothing stored.
   // COUNT(*) — how many facts exist. AVG(rating) — the average of those facts,
