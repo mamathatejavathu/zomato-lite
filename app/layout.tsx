@@ -18,8 +18,12 @@ export const metadata: Metadata = {
   description: "Reviews for Ludhiana Burrito",
 };
 
+// The phone's browser chrome follows the system theme, matching the page.
 export const viewport = {
-  themeColor: "#141414",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f7f5" },
+    { media: "(prefers-color-scheme: dark)", color: "#141414" },
+  ],
 };
 
 export default function RootLayout({
@@ -29,8 +33,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* Colours come from the token pairs in globals.css (one source of
+          truth) — no hard-coded theme colours on <body> itself. */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-[#141414] text-[#f4f4f5] antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
       >
         <TopBar />
         {children}

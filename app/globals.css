@@ -1,16 +1,96 @@
 @import "tailwindcss";
 
+/* Semantic colour tokens. Backgrounds and text colours are defined as
+   PAIRS per theme, and every card applies them together (bg-card text-ink),
+   so a card can never end up with its background from one theme and its
+   text from another.
+
+   Contrast (WCAG AA):
+   light  ink #1C1C1C on card #FFFFFF = 17.0:1   ink-soft #6B6B6B = 5.3:1
+   dark   ink #F2F2F2 on card #1E1E1E = 14.9:1   ink-soft #A0A0A0 = 6.4:1
+   white on accent #CB202D = 5.6:1  (button text, AA for body text)
+   accent-text: red used AS text — #CB202D on light (5.2:1),
+                #F87171 on dark (6.0:1) so red text stays readable. */
+
 @theme inline {
-  --color-background: #141414;
-  --color-foreground: #f4f4f5;
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-text: var(--accent-text);
+  --color-star-off: var(--star-off);
+  --color-overlay-soft: var(--overlay-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* The base layer of the app is Zomato dark. These values match the
-   utilities on <body> in layout.tsx — one source of truth. */
+/* Light theme (default) */
+:root {
+  color-scheme: light;
+  --page: #f7f7f5;
+  --card: #ffffff;
+  --ink: #1c1c1c;
+  --ink-soft: #6b6b6b;
+  --line: #e6e4e0;
+  --accent: #cb202d;
+  --accent-strong: #a81b24;
+  --accent-text: #cb202d;
+  --star-off: #ddd9d3;
+  --overlay-soft: #d6d4cf;
+}
+
+/* Dark theme (system) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #141414;
+    --card: #1e1e1e;
+    --ink: #f2f2f2;
+    --ink-soft: #a0a0a0;
+    --line: #2e2e30;
+    --accent: #cb202d;
+    --accent-strong: #a81b24;
+    --accent-text: #f87171;
+    --star-off: #3f3f43;
+    --overlay-soft: #d6d4cf;
+  }
+}
+
+/* Explicit overrides — let tests (and a future manual toggle) pin a theme
+   regardless of the system setting. Higher specificity than :root. */
+html[data-theme="light"] {
+  color-scheme: light;
+  --page: #f7f7f5;
+  --card: #ffffff;
+  --ink: #1c1c1c;
+  --ink-soft: #6b6b6b;
+  --line: #e6e4e0;
+  --accent: #cb202d;
+  --accent-strong: #a81b24;
+  --accent-text: #cb202d;
+  --star-off: #ddd9d3;
+  --overlay-soft: #d6d4cf;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #141414;
+  --card: #1e1e1e;
+  --ink: #f2f2f2;
+  --ink-soft: #a0a0a0;
+  --line: #2e2e30;
+  --accent: #cb202d;
+  --accent-strong: #a81b24;
+  --accent-text: #f87171;
+  --star-off: #3f3f43;
+  --overlay-soft: #d6d4cf;
+}
+
 body {
-  background: #141414;
-  color: #f4f4f5;
+  background: var(--page);
+  color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
 }

@@ -80,15 +80,15 @@ export default function ReviewPage() {
   if (missing) {
     return (
       <Main>
-        <p className="text-[#a1a1a3]">Restaurant not found.</p>
+        <p className="text-ink-soft">Restaurant not found.</p>
       </Main>
     );
   }
 
   return (
     <Main>
-      {/* Small ambience photo header */}
-      <div className="relative h-28 w-full overflow-hidden rounded-2xl border border-[#2a2a2e]">
+      {/* Small ambience photo header (text-free, so no theme concerns) */}
+      <div className="relative h-28 w-full overflow-hidden rounded-2xl border border-line">
         <Image
           src="/images/interior.jpg"
           alt="Restaurant ambience"
@@ -100,12 +100,17 @@ export default function ReviewPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
       </div>
 
-      <p className="mt-4 text-sm text-[#a1a1a3]">Write a review for</p>
-      <h1 className="mt-1 text-2xl font-bold tracking-tight text-white">
+      <p className="mt-4 text-sm text-ink-soft">Write a review for</p>
+      <h1 className="mt-1 text-2xl font-bold tracking-tight text-ink">
         {name ?? "…"}
       </h1>
 
-      <form onSubmit={handleSubmit} className="mt-7">
+      {/* The whole form lives on a card: bg-card + text-ink set together,
+          never inherited separately. */}
+      <form
+        onSubmit={handleSubmit}
+        className="mt-7 rounded-2xl border border-line bg-card p-5 text-ink shadow-sm"
+      >
         {/* A star picker, 1 to 5, clickable, with a clear selected state
             and a Zomato-style caption that describes the chosen rating */}
         <label className="block text-sm font-semibold">Your rating</label>
@@ -122,21 +127,21 @@ export default function ReviewPage() {
             >
               <Star
                 filled={n <= rating}
-                className="h-9 w-9 text-[#E23744]"
+                className="h-9 w-9 text-accent"
               />
             </button>
           ))}
         </div>
         <p
           className={`mt-2 h-5 text-sm font-semibold ${
-            rating > 0 ? "text-[#E23744]" : "text-transparent"
+            rating > 0 ? "text-accent-text" : "text-transparent"
           }`}
           aria-live="polite"
         >
           {RATING_CAPTIONS[rating]}
         </p>
 
-        {/* A comment box */}
+        {/* A comment box — themed text on the card, secondary placeholder */}
         <label htmlFor="comment" className="mt-4 block text-sm font-semibold">
           Your comment
         </label>
@@ -146,16 +151,18 @@ export default function ReviewPage() {
           onChange={(e) => setComment(e.target.value)}
           rows={4}
           placeholder="Share your experience…"
-          className="mt-2 w-full resize-none rounded-xl border border-[#34343a] bg-[#232327] px-4 py-3 text-base text-[#f4f4f5] shadow-sm outline-none placeholder:text-[#6b6b70] focus:border-[#E23744]"
+          className="mt-2 w-full resize-none rounded-xl border border-line bg-transparent px-4 py-3 text-base text-ink shadow-sm outline-none placeholder:text-ink-soft focus:border-accent"
         />
 
-        {error && <p className="mt-3 text-sm font-medium text-[#E23744]">{error}</p>}
+        {error && (
+          <p className="mt-3 text-sm font-medium text-accent-text">{error}</p>
+        )}
 
         {/* Submit, disabled until a rating is picked and the comment is non-empty */}
         <button
           type="submit"
           disabled={!canSubmit}
-          className="mt-5 w-full rounded-xl bg-[#E23744] px-5 py-3.5 font-semibold text-white shadow-sm transition-colors hover:bg-[#c92a37] disabled:opacity-40"
+          className="mt-5 w-full rounded-xl bg-accent px-5 py-3.5 font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong disabled:opacity-40"
         >
           {submitting ? "Submitting…" : "Submit Review"}
         </button>

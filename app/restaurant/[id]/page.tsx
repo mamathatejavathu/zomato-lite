@@ -64,17 +64,19 @@ export default function RestaurantPage() {
   }, [id]);
 
   if (status === "loading") {
-    return <Main>Loading…</Main>;
+    return <Main><p className="text-ink-soft">Loading…</p></Main>;
   }
 
   if (status === "missing" || !data) {
-    return <Main>Restaurant not found.</Main>;
+    return <Main><p className="text-ink-soft">Restaurant not found.</p></Main>;
   }
 
   return (
     <Main>
-      {/* Hero photo with the restaurant name overlaid, Zomato-style */}
-      <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-[#2a2a2e]">
+      {/* Hero photo with the restaurant name overlaid, Zomato-style.
+          Text on a photo sits on a dark gradient in both themes, so it
+          always uses solid white/light-grey — it never inherits the theme. */}
+      <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-line">
         <Image
           src="/images/hero.jpg"
           alt={data.name}
@@ -88,7 +90,7 @@ export default function RestaurantPage() {
           <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow">
             {data.name}
           </h1>
-          <p className="mt-1 text-sm text-white/75">
+          <p className="mt-1 text-sm text-overlay-soft">
             {data.cuisine} · {data.area}
           </p>
         </div>
@@ -99,7 +101,7 @@ export default function RestaurantPage() {
         {STRIP.map((p) => (
           <div
             key={p.src}
-            className="relative h-24 overflow-hidden rounded-xl border border-[#2a2a2e]"
+            className="relative h-24 overflow-hidden rounded-xl border border-line"
           >
             <Image
               src={p.src}
@@ -113,39 +115,41 @@ export default function RestaurantPage() {
       </div>
 
       {data.totalReviews === 0 ? (
-        // Empty state that invites the first review
-        <div className="mt-6 rounded-2xl border border-[#2a2a2e] bg-[#1e1e21] p-8 text-center shadow-sm">
-          <p className="text-[#a1a1a3]">No reviews yet.</p>
+        // Empty state — background and text set together on the card.
+        <div className="mt-6 rounded-2xl border border-line bg-card p-8 text-center text-ink shadow-sm">
+          <p className="text-ink-soft">No reviews yet.</p>
           <p className="mt-1 font-semibold">Be the first to review {data.name}</p>
         </div>
       ) : (
         <>
           {/* The average rating, large — the biggest thing on the page.
               The line that prints the average is simply {data.averageRating}.
-              There is no calculation anywhere in this file. */}
-          <div className="mt-6 rounded-2xl border border-[#2a2a2e] bg-[#1e1e21] p-5 shadow-sm">
+              There is no calculation anywhere in this file.
+              The number uses the primary text colour — never faded grey. */}
+          <div className="mt-6 rounded-2xl border border-line bg-card p-5 text-ink shadow-sm">
             <div className="flex items-end gap-2">
-              <span className="text-6xl font-extrabold leading-none tracking-tight text-white">
+              <span className="text-6xl font-extrabold leading-none tracking-tight">
                 {data.averageRating}
               </span>
-              <Star filled className="mb-1.5 h-7 w-7 text-[#E23744]" />
+              <Star filled className="mb-1.5 h-7 w-7 text-accent" />
             </div>
-            <p className="mt-2 text-sm text-[#a1a1a3]">
+            <p className="mt-2 text-sm text-ink-soft">
               Based on {data.totalReviews}{" "}
               {data.totalReviews === 1 ? "review" : "reviews"}
             </p>
           </div>
 
-          <h2 className="mt-8 text-lg font-bold tracking-tight">Reviews</h2>
+          <h2 className="mt-8 text-lg font-bold tracking-tight text-ink">Reviews</h2>
 
-          {/* The latest review, highlighted with the brand-red chip */}
+          {/* The latest review, highlighted with the brand-red chip.
+              Every card: bg-card + text-ink travel together. */}
           {data.latestReview && (
-            <article className="mt-3 rounded-2xl border border-[#E23744]/45 bg-[#1e1e21] p-4 shadow-sm">
+            <article className="mt-3 rounded-2xl border border-accent/40 bg-card p-4 text-ink shadow-sm">
               <div className="flex items-center justify-between">
-                <span className="rounded-full bg-[#E23744] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                <span className="rounded-full bg-accent px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
                   Latest
                 </span>
-                <span className="text-xs text-[#a1a1a3]">
+                <span className="text-xs text-ink-soft">
                   {formatDate(data.latestReview.createdAt)}
                 </span>
               </div>
@@ -154,21 +158,22 @@ export default function RestaurantPage() {
                   <Star
                     key={n}
                     filled={n <= data.latestReview!.rating}
-                    className="h-4 w-4 text-[#E23744]"
+                    className="h-4 w-4 text-accent"
                   />
                 ))}
               </div>
+              {/* Comment text: primary colour, full opacity — no fading. */}
               <p className="mt-2 text-lg">{data.latestReview.comment}</p>
             </article>
           )}
 
-          {/* The older reviews, plain dark cards */}
+          {/* The older reviews, plain cards */}
           {data.reviews.length > 0 && (
             <div className="mt-3 space-y-3">
               {data.reviews.map((review) => (
                 <article
                   key={review.id}
-                  className="rounded-2xl border border-[#2a2a2e] bg-[#1e1e21] p-4 shadow-sm"
+                  className="rounded-2xl border border-line bg-card p-4 text-ink shadow-sm"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex gap-1">
@@ -176,11 +181,11 @@ export default function RestaurantPage() {
                         <Star
                           key={n}
                           filled={n <= review.rating}
-                          className="h-4 w-4 text-[#E23744]"
+                          className="h-4 w-4 text-accent"
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-[#a1a1a3]">
+                    <span className="text-xs text-ink-soft">
                       {formatDate(review.createdAt)}
                     </span>
                   </div>
@@ -192,12 +197,12 @@ export default function RestaurantPage() {
         </>
       )}
 
-      {/* Sticky, Zomato-red call to action pinned to the bottom of the screen */}
-      <div className="sticky bottom-0 mt-10 border-t border-[#26262a] bg-[#141414]/95 backdrop-blur">
+      {/* Sticky, brand-red call to action on an opaque themed bar */}
+      <div className="sticky bottom-0 mt-10 border-t border-line bg-page">
         <div className="mx-auto max-w-[512px] py-3">
           <a
             href={`/review/${id}`}
-            className="block rounded-xl bg-[#E23744] px-5 py-3 text-center font-semibold text-white shadow-sm transition-colors hover:bg-[#c92a37]"
+            className="block rounded-xl bg-accent px-5 py-3 text-center font-semibold text-white shadow-sm transition-colors hover:bg-accent-strong"
           >
             Write a Review
           </a>
